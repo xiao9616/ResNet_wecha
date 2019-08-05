@@ -1,39 +1,83 @@
-# ResNet_wechat
+# A Simple Keras + deep learning REST API
 
-#### 介绍
-{**以下是码云平台说明，您可以替换此简介**
-码云是 OSCHINA 推出的基于 Git 的代码托管平台（同时支持 SVN）。专为开发者提供稳定、高效、安全的云端软件开发协作平台
-无论是个人、团队、或是企业，都能够用码云实现代码托管、项目管理、协作开发。企业项目请看 [https://gitee.com/enterprises](https://gitee.com/enterprises)}
+This repository contains the code for [*Building a simple Keras + deep learning REST API*](https://blog.keras.io/building-a-simple-keras-deep-learning-rest-api.html), published on the Keras.io blog.
 
-#### 软件架构
-软件架构说明
+The method covered here is intended to be instructional. It is _not_ meant to be production-level and capable of scaling under heavy load. If you're interested in a more advanced Keras REST API that leverages message queues and batching, [please refer to this tutorial](https://www.pyimagesearch.com/2018/01/29/scalable-keras-deep-learning-rest-api/).
 
+For an _even more advanced version_ that includes deploying a model to production, [refer to this blog post](https://www.pyimagesearch.com/2018/02/05/deep-learning-production-keras-redis-flask-apache/).
 
-#### 安装教程
+## Getting started
 
-1. xxxx
-2. xxxx
-3. xxxx
+I assume you already have Keras (and a supported backend) installed on your system. From there you need to install [Flask](http://flask.pocoo.org/) and [requests](http://docs.python-requests.org/en/master/):
 
-#### 使用说明
+```sh
+$ pip install flask gevent requests
+```
 
-1. xxxx
-2. xxxx
-3. xxxx
+Next, clone the repo:
 
-#### 参与贡献
+```sh
+$ git clone https://github.com/jrosebr1/simple-keras-rest-api.git
+```
 
-1. Fork 本仓库
-2. 新建 Feat_xxx 分支
-3. 提交代码
-4. 新建 Pull Request
+## Starting the Keras server
 
+Below you can see the image we wish to classify, a _dog_, but more specifically a _beagle_:
 
-#### 码云特技
+![dog](dog.jpg)
 
-1. 使用 Readme\_XXX.md 来支持不同的语言，例如 Readme\_en.md, Readme\_zh.md
-2. 码云官方博客 [blog.gitee.com](https://blog.gitee.com)
-3. 你可以 [https://gitee.com/explore](https://gitee.com/explore) 这个地址来了解码云上的优秀开源项目
-4. [GVP](https://gitee.com/gvp) 全称是码云最有价值开源项目，是码云综合评定出的优秀开源项目
-5. 码云官方提供的使用手册 [https://gitee.com/help](https://gitee.com/help)
-6. 码云封面人物是一档用来展示码云会员风采的栏目 [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
+The Flask + Keras server can be started by running:
+
+```sh
+$ python run_keras_server.py 
+Using TensorFlow backend.
+ * Loading Keras model and Flask starting server...please wait until server has fully started
+...
+ * Running on http://127.0.0.1:5000
+```
+
+You can now access the REST API via `http://127.0.0.1:5000`.
+
+## Submitting requests to the Keras server
+
+Requests can be submitted via cURL:
+
+```sh
+$ curl -X POST -F image=@dog.jpg 'http://localhost:5000/predict'
+{
+  "predictions": [
+    {
+      "label": "beagle", 
+      "probability": 0.9901360869407654
+    }, 
+    {
+      "label": "Walker_hound", 
+      "probability": 0.002396771451458335
+    }, 
+    {
+      "label": "pot", 
+      "probability": 0.0013951235450804234
+    }, 
+    {
+      "label": "Brittany_spaniel", 
+      "probability": 0.001283277408219874
+    }, 
+    {
+      "label": "bluetick", 
+      "probability": 0.0010894243605434895
+    }
+  ], 
+  "success": true
+}
+```
+
+Or programmatically:
+
+```sh
+$ python simple_request.py 
+1. beagle: 0.9901
+2. Walker_hound: 0.0024
+3. pot: 0.0014
+4. Brittany_spaniel: 0.0013
+5. bluetick: 0.0011
+```
